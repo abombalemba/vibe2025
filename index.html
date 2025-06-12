@@ -34,7 +34,7 @@
         }
         .add-form input[type="text"] {
             padding: 8px;
-            width: 70%;
+            width: 72%;
         }
         .add-form button {
             padding: 8px;
@@ -49,9 +49,10 @@
 <table id="todoList">
     <thead>
         <tr>
-            <th>Number</th>
+            <th>ID</th>
             <th>Text</th>
-            <th>Action</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody id="listBody">
@@ -77,6 +78,7 @@
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td>${item.text}</td>
+                <td><button onclick="editItem(${index})">Edit</button></td>
                 <td><button onclick="removeItem(${index})">Remove</button></td>
             `;
             listBody.appendChild(row);
@@ -94,11 +96,59 @@
         }
     }
 
+    function editItem(index, newText) {
+        renderList();
+    }
+
     function removeItem(index) {
         items.splice(index, 1);
         renderList();
     }
+
+    
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Загрузка задач
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/items');
+                if (!response.ok) throw new Error('Failed to load items');
+                const data = await response.json();
+                renderItems(data.items);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load items');
+            }
+        }
+    
+        // Добавление новой задачи
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('newItemText').value.trim();
+            if (!text) return;
+    
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                
+                if (!response.ok) throw new Error('Failed to add item');
+                document.getElementById('newItemText').value = '';
+                loadItems();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add item');
+            }
+        });
+    
+        // Инициализация
+        loadItems();
+    });
+    </script>
 
 </body>
 </html>

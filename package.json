@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cookie": "^1.0.2",
     "mysql2": "^3.14.1"
   }
 }

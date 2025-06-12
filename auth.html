@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аутентификация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .auth-container {
+            display: flex;
+            width: 800px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .form-section {
+            flex: 1;
+            padding: 40px;
+            background: white;
+        }
+        .login-section {
+            border-right: 1px solid #eee;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .error {
+            background-color: #ffdddd;
+            color: #d8000c;
+        }
+        .success {
+            background-color: #ddffdd;
+            color: #4F8A10;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="form-section register-section">
+            <h2>Регистрация</h2>
+            <form id="registerForm">
+                <input type="text" name="username" placeholder="Имя пользователя" required>
+                <input type="password" name="password" placeholder="Пароль" required>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <div id="registerMessage" class="message"></div>
+        </div>
+
+        <div class="form-section login-section">
+            <h2>Вход</h2>
+            <form id="loginForm">
+                <input type="text" name="username" placeholder="Имя пользователя" required>
+                <input type="password" name="password" placeholder="Пароль" required>
+                <button type="submit">Войти</button>
+            </form>
+            <div id="loginMessage" class="message"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+            
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                const messageEl = document.getElementById('registerMessage');
+                
+                if (result.success) {
+                    
+                    messageEl.textContent = 'Регистрация успешна! Теперь вы можете войти.';
+                    messageEl.className = 'message success';
+                    messageEl.style.display = 'block';
+                    e.target.reset();
+                    window.location.href = result.redirect;
+
+                } else {
+                    messageEl.textContent = result.error || 'Ошибка регистрации';
+                    messageEl.className = 'message error';
+                    messageEl.style.display = 'block';
+                }
+            } catch (error) {
+                const messageEl = document.getElementById('registerMessage');
+                messageEl.textContent = 'Ошибка соединения';
+                messageEl.className = 'message error';
+                messageEl.style.display = 'block';
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+            
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                const messageEl = document.getElementById('loginMessage');
+                
+                if (result.success && result.redirect) {
+    window.location.href = result.redirect;
+                } else {
+                    messageEl.textContent = result.error || 'Неверное имя пользователя или пароль';
+                    messageEl.className = 'message error';
+                    messageEl.style.display = 'block';
+                }
+            } catch (error) {
+                const messageEl = document.getElementById('loginMessage');
+                messageEl.textContent = 'Ошибка соединения';
+                messageEl.className = 'message error';
+                messageEl.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
