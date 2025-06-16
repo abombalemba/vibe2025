@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: aqua;
+}
+#todoList {
+    border-collapse: collapse;
+    width: 70%;
+    margin: 0 auto;
+}
+#todoList th, #todoList td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+#todoList th {
+    background-color: #f0f0f0;
+}
+#todoList th:first-child, #todoList th:last-child {
+    width: 5%;
+}
+#todoList th:nth-child(2) {
+    width: 90%;
+}
+.add-form {
+    margin-top: 20px;
+    width: 70%;
+    margin: 20px auto;
+}
+.add-form input[type="text"] {
+    padding: 8px;
+    width: 72%;
+}
+.add-form button {
+    padding: 8px;
+    width: 20%;
+}
