@@ -29,12 +29,14 @@ async function requireAuth(req, res) {
 
 async function createItem(userId, text) {
     const connection = await mysql.createConnection(dbConfig);
+
     try {
         const [result] = await connection.execute(
-            'INSERT INTO items (text, user_id) VALUES (?, ?)',
-            [text, userId]
+            'INSERT INTO items (text, user_id) VALUES (?, ?)', [text, userId]
         );
         return result.insertId;
+	} catch (error) {
+		console.log(error);
     } finally {
         await connection.end();
     }
