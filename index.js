@@ -42,12 +42,15 @@ async function createItem(userId, text) {
 
 async function updateItem(userId, itemId, text) {
     const connection = await mysql.createConnection(dbConfig);
+
     try {
         const [result] = await connection.execute(
-            'UPDATE items SET text = ? WHERE id = ? AND user_id = ?',
-            [text, itemId, userId]
+            'UPDATE items SET text = ? WHERE id = ? AND user_id = ?', [text, itemId, userId]
         );
+		
         return result.affectedRows > 0;
+	} catch (error) {
+		console.log(error);
     } finally {
         await connection.end();
     }
