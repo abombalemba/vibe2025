@@ -55,12 +55,15 @@ async function updateItem(userId, itemId, text) {
 
 async function deleteItem(userId, itemId) {
     const connection = await mysql.createConnection(dbConfig);
+
     try {
         const [result] = await connection.execute(
-            'DELETE FROM items WHERE id = ? AND user_id = ?',
-            [itemId, userId]
+            'DELETE FROM items WHERE id = ? AND user_id = ?', [itemId, userId]
         );
+
         return result.affectedRows > 0;
+	} catch (error) {
+		console.log(error);
     } finally {
         await connection.end();
     }
